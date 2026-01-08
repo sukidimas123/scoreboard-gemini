@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard Basket SMA 1 Magetan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+        .digital-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .score-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        .btn-action {
+            transition: all 0.2s;
+        }
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+        .glow-red { text-shadow: 0 0 15px rgba(239, 68, 68, 0.7); }
+        .glow-yellow { text-shadow: 0 0 15px rgba(234, 179, 8, 0.7); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-8">
+
+    <!-- Header / Identitas Sekolah -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-yellow-500 uppercase italic">
+            SMA 1 MAGETAN
+        </h1>
+        <p class="text-slate-400 font-semibold tracking-widest mt-1">BASKETBALL SCOREBOARD</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Tim Rumah (HOME) -->
+        <section class="score-box rounded-3xl p-6 border-t-4 border-blue-500 flex flex-col items-center">
+            <input type="text" value="HOME" class="bg-transparent text-center text-2xl font-bold w-full focus:outline-none mb-4 uppercase tracking-wider text-blue-400">
+            <div id="score-home" class="digital-font text-8xl md:text-9xl font-bold mb-6 transition-all duration-300">0</div>
+            <div class="grid grid-cols-3 gap-2 w-full mb-6">
+                <button onclick="updateScore('home', 1)" class="btn-action bg-slate-700 hover:bg-slate-600 p-3 rounded-lg font-bold">+1</button>
+                <button onclick="updateScore('home', 2)" class="btn-action bg-slate-700 hover:bg-slate-600 p-3 rounded-lg font-bold">+2</button>
+                <button onclick="updateScore('home', 3)" class="btn-action bg-slate-700 hover:bg-slate-600 p-3 rounded-lg font-bold">+3</button>
+            </div>
+            <button onclick="updateScore('home', -1)" class="text-slate-500 text-sm hover:text-red-400 transition-colors">Koreksi -1</button>
+            
+            <div class="mt-8 grid grid-cols-2 gap-4 w-full text-center">
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-bold">Fouls</p>
+                    <div id="foul-home" class="text-3xl font-bold text-red-500">0</div>
+                    <div class="flex justify-center gap-2 mt-1">
+                        <button onclick="updateFoul('home', 1)" class="bg-red-900/30 text-red-500 px-3 rounded">+</button>
+                        <button onclick="updateFoul('home', -1)" class="bg-red-900/30 text-red-500 px-3 rounded">-</button>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-bold">Timeout</p>
+                    <div id="timeout-home" class="text-3xl font-bold text-yellow-500">0</div>
+                    <div class="flex justify-center gap-2 mt-1">
+                        <button onclick="updateTimeout('home', 1)" class="bg-yellow-900/30 text-yellow-500 px-3 rounded">+</button>
+                        <button onclick="updateTimeout('home', -1)" class="bg-yellow-900/30 text-yellow-500 px-3 rounded">-</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kontrol Tengah (Waktu & Period) -->
+        <section class="flex flex-col items-center justify-between py-4">
+            <div class="w-full text-center score-box rounded-2xl p-6 border-b-4 border-yellow-500 mb-6">
+                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Game Clock</p>
+                <div id="game-timer" class="digital-font text-7xl font-bold glow-yellow mb-4 cursor-pointer" onclick="toggleGameTimer()">10:00</div>
+                <div class="flex justify-center gap-4">
+                    <button id="btn-timer-toggle" onclick="toggleGameTimer()" class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-full font-bold transition-all">START</button>
+                    <button onclick="resetGameTimer()" class="bg-slate-700 hover:bg-slate-600 px-6 py-2 rounded-full font-bold">RESET</button>
+                </div>
+            </div>
+
+            <div class="w-full grid grid-cols-1 gap-4 mb-6">
+                <div class="score-box rounded-2xl p-6 text-center">
+                    <p class="text-xs text-slate-400 font-bold uppercase mb-1">Period</p>
+                    <div id="period" class="text-5xl font-bold digital-font">1</div>
+                    <div class="flex justify-center gap-4 mt-2">
+                        <button onclick="updatePeriod(1)" class="bg-slate-700 px-4 py-1 rounded-lg hover:bg-slate-600 font-bold">+</button>
+                        <button onclick="updatePeriod(-1)" class="bg-slate-700 px-4 py-1 rounded-lg hover:bg-slate-600 font-bold">-</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full text-center">
+                <button onclick="newGame()" class="text-slate-500 hover:text-white transition-colors text-sm uppercase tracking-widest font-bold">Reset Pertandingan</button>
+            </div>
+        </section>
+
+        <!-- Tim Tamu (AWAY) -->
+        <section class="score-box rounded-3xl p-6 border-t-4 border-red-500 flex flex-col items-center">
+            <input type="text" value="VISITOR" class="bg-transparent text-center text-2xl font-bold w-full focus:outline-none mb-4 uppercase tracking-wider text-red-400">
+            <div id="score-away" class="digital-font text-8xl md:text-9xl font-bold mb-6 transition-all duration-300">0</div>
+            <div class="grid grid-cols-3 gap-2 w-full mb-6">
+                <button onclick="updateScore('away', 1)" class="btn-action bg-slate-700 hover:bg-slate-600 p-3 rounded-lg font-bold">+1</button>
+                <button onclick="updateScore('away', 2)" class="btn-action bg-slate-700 hover:bg-slate-600 p-3 rounded-lg font-bold">+2</button>
+                <button onclick="updateScore('away', 3)" class="btn-action bg-slate-700 hover:bg-slate-600 p-3 rounded-lg font-bold">+3</button>
+            </div>
+            <button onclick="updateScore('away', -1)" class="text-slate-500 text-sm hover:text-red-400 transition-colors">Koreksi -1</button>
+
+            <div class="mt-8 grid grid-cols-2 gap-4 w-full text-center">
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-bold">Fouls</p>
+                    <div id="foul-away" class="text-3xl font-bold text-red-500">0</div>
+                    <div class="flex justify-center gap-2 mt-1">
+                        <button onclick="updateFoul('away', 1)" class="bg-red-900/30 text-red-500 px-3 rounded">+</button>
+                        <button onclick="updateFoul('away', -1)" class="bg-red-900/30 text-red-500 px-3 rounded">-</button>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-bold">Timeout</p>
+                    <div id="timeout-away" class="text-3xl font-bold text-yellow-500">0</div>
+                    <div class="flex justify-center gap-2 mt-1">
+                        <button onclick="updateTimeout('away', 1)" class="bg-yellow-900/30 text-yellow-500 px-3 rounded">+</button>
+                        <button onclick="updateTimeout('away', -1)" class="bg-yellow-900/30 text-yellow-500 px-3 rounded">-</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Notifikasi Sederhana -->
+    <div id="alert-box" class="fixed top-10 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-8 py-4 rounded-xl font-bold shadow-2xl hidden z-50 animate-bounce">
+        WAKTU HABIS!
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            scores: { home: 0, away: 0 },
+            fouls: { home: 0, away: 0 },
+            timeouts: { home: 0, away: 0 },
+            period: 1,
+            gameTime: 600, // 10 menit dalam detik
+            timerRunning: false
+        };
+
+        let interval = null;
+
+        // Sound simulation (beep)
+        const playBeep = () => {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = context.createOscillator();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(440, context.currentTime);
+            osc.connect(context.destination);
+            osc.start();
+            setTimeout(() => osc.stop(), 1000);
+        };
+
+        function updateUI() {
+            document.getElementById('score-home').innerText = state.scores.home;
+            document.getElementById('score-away').innerText = state.scores.away;
+            document.getElementById('foul-home').innerText = state.fouls.home;
+            document.getElementById('foul-away').innerText = state.fouls.away;
+            document.getElementById('timeout-home').innerText = state.timeouts.home;
+            document.getElementById('timeout-away').innerText = state.timeouts.away;
+            document.getElementById('period').innerText = state.period;
+            
+            const mins = Math.floor(state.gameTime / 60);
+            const secs = state.gameTime % 60;
+            document.getElementById('game-timer').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+            
+            const toggleBtn = document.getElementById('btn-timer-toggle');
+            if(state.timerRunning) {
+                toggleBtn.innerText = 'STOP';
+                toggleBtn.classList.replace('bg-green-600', 'bg-red-600');
+            } else {
+                toggleBtn.innerText = 'START';
+                toggleBtn.classList.replace('bg-red-600', 'bg-green-600');
+            }
+        }
+
+        function updateScore(team, val) {
+            state.scores[team] = Math.max(0, state.scores[team] + val);
+            updateUI();
+        }
+
+        function updateFoul(team, val) {
+            state.fouls[team] = Math.max(0, state.fouls[team] + val);
+            updateUI();
+        }
+
+        function updateTimeout(team, val) {
+            state.timeouts[team] = Math.max(0, state.timeouts[team] + val);
+            updateUI();
+        }
+
+        function updatePeriod(val) {
+            state.period = Math.max(1, state.period + val);
+            updateUI();
+        }
+
+        function toggleGameTimer() {
+            if (state.timerRunning) {
+                clearInterval(interval);
+                state.timerRunning = false;
+            } else {
+                if (state.gameTime <= 0) return;
+                state.timerRunning = true;
+                interval = setInterval(() => {
+                    if (state.gameTime > 0) {
+                        state.gameTime--;
+                    }
+
+                    if (state.gameTime <= 0) {
+                        clearInterval(interval);
+                        state.timerRunning = false;
+                        showAlert("WAKTU PERTANDINGAN HABIS!");
+                        playBeep();
+                    }
+                    
+                    updateUI();
+                }, 1000);
+            }
+            updateUI();
+        }
+
+        function resetGameTimer() {
+            clearInterval(interval);
+            state.timerRunning = false;
+            state.gameTime = 600;
+            updateUI();
+        }
+
+        function showAlert(msg) {
+            const box = document.getElementById('alert-box');
+            box.innerText = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 5000);
+        }
+
+        function newGame() {
+            if(confirm("Apakah Anda yakin ingin mereset seluruh skor dan waktu?")) {
+                state = {
+                    scores: { home: 0, away: 0 },
+                    fouls: { home: 0, away: 0 },
+                    timeouts: { home: 0, away: 0 },
+                    period: 1,
+                    gameTime: 600,
+                    timerRunning: false
+                };
+                clearInterval(interval);
+                updateUI();
+            }
+        }
+
+        // Shortcut keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                toggleGameTimer();
+            }
+        });
+
+        // Initial UI Render
+        updateUI();
+    </script>
+</body>
+</html>
